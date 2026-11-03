@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Pusat Bantuan Tiket Bus</title>
+
+    <meta name="description" content="Pusat bantuan layanan tiket bus. Informasi cetak tiket, refund dana, dan pembatalan tiket.">
+
+    <style>
+        :root {
+            --navy: #102b55;
+            --blue: #1769e0;
+            --blue-dark: #1054bd;
+            --light-blue: #eaf3ff;
+            --text: #172b4d;
+            --muted: #718096;
+            --white: #ffffff;
+            --border: #e7edf5;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fc;
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        .header {
+            background: rgba(255, 255, 255, 0.97);
+            border-bottom: 1px solid #e9eef6;
+            position: relative;
+            z-index: 5;
+        }
+
+        .header-inner {
+            max-width: 1120px;
+            margin: auto;
+            padding: 16px 22px;
+            display: flex;
+            align-items: center;
+            gap: 13px;
+        }
+
+        .brand-icon {
+            width: 46px;
+            height: 46px;
+            background: linear-gradient(135deg, #2581ff, #104fb5);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 15px;
+            flex-shrink: 0;
+            box-shadow: 0 7px 18px rgba(23, 105, 224, 0.23);
+            animation: iconFloat 3s ease-in-out infinite;
+        }
+
+        .brand-icon svg {
+            width: 26px;
+            height: 26px;
+        }
+
+        .brand-name {
+            font-size: 17px;
+            font-weight: 800;
+            color: var(--navy);
+            letter-spacing: -0.3px;
+        }
+
+        .brand-subtitle {
+            color: #7b8799;
+            font-size: 12px;
+            margin-top: 1px;
+        }
+
+        /* =========================
+           LABEL ANIMASI
+        ========================= */
+
+        .service-status {
+            display: flex;
+            justify-content: center;
+            padding: 25px 15px 23px;
+        }
+
+        .status-label {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 11px;
+            overflow: hidden;
+
+            padding: 12px 23px;
+            border-radius: 50px;
+
+            background: linear-gradient(
+                110deg,
+                #e5efff,
+                #ffffff,
+                #e5efff
+            );
+
+            background-size: 200% 100%;
+            border: 1px solid #d3e4ff;
+
+            color: #1458bc;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.35px;
+
+            box-shadow:
+                0 5px 17px rgba(23, 105, 224, 0.08),
+                inset 0 1px 0 #ffffff;
+
+            animation:
+                labelGlow 3s ease-in-out infinite,
+                labelShimmer 5s linear infinite;
+        }
+
+        .status-label::after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -100%;
+            width: 55%;
+            height: 200%;
+
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.85),
+                transparent
+            );
+
+            transform: skewX(-22deg);
+            animation: shineSweep 4s ease-in-out infinite;
+        }
+
+        .status-dot {
+            position: relative;
+            width: 9px;
+            height: 9px;
+            background: #21b77b;
+            border-radius: 50%;
+            flex-shrink: 0;
+            z-index: 1;
+            animation: dotPulse 1.6s ease-out infinite;
+        }
+
+        .status-dot::after {
+            content: "";
+            position: absolute;
+            inset: -5px;
+            border: 1px solid rgba(33, 183, 123, 0.55);
+            border-radius: 50%;
+            animation: dotRipple 1.6s ease-out infinite;
+        }
+
+        .status-label span:last-child {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* =========================
+           BANNER FULL WIDTH
+        ========================= */
+
+        .slider {
+            width: 100%;
+            height: 220px;
+            position: relative;
+            overflow: hidden;
+            background: #102b55;
+            margin: 0 0 37px;
+            box-shadow: 0 10px 28px rgba(16, 43, 85, 0.12);
+        }
+
+        .slides {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            transition: transform 1s cubic-bezier(0.22, 0.61, 0.36, 1);
+            will-change: transform;
+        }
+
+        .slide {
+            flex: 0 0 100%;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .banner-image {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        /* =========================
+           KONTEN UTAMA
+        ========================= */
+
+        .container {
+            max-width: 1040px;
+            margin: auto;
+            padding: 0 22px 50px;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 20px;
+            animation: fadeUp 0.7s ease both;
+        }
+
+        .section-heading h2 {
+            font-size: 24px;
+            letter-spacing: -0.6px;
+            color: var(--navy);
+        }
+
+        .section-heading p {
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 3px;
+        }
+
+        .section-tag {
+            color: #1769e0;
+            background: #e7f0ff;
+            border: 1px solid #d9e8ff;
+            padding: 7px 12px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        /* =========================
+           KARTU LAYANAN
+        ========================= */
+
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 19px;
+        }
+
+        .service-card {
+            position: relative;
+            background: #ffffff;
+            border: 1px solid #e7edf6;
+            border-radius: 21px;
+            padding: 25px 22px 22px;
+            min-height: 250px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+
+            overflow: hidden;
+
+            box-shadow: 0 5px 18px rgba(25, 55, 100, 0.045);
+
+            transition:
+                transform 0.3s ease,
+                box-shadow 0.3s ease,
+                border-color 0.3s ease;
+
+            animation: fadeUp 0.7s ease both;
+        }
+
+        .service-card:nth-child(2) {
+            animation-delay: 0.12s;
+        }
+
+        .service-card:nth-child(3) {
+            animation-delay: 0.24s;
+        }
+
+        .service-card::before {
+            content: "";
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: #f0f6ff;
+            right: -65px;
+            top: -70px;
+            transition: transform 0.4s ease;
+        }
+
+        .service-card::after {
+            content: "";
+            position: absolute;
+            height: 4px;
+            left: 0;
+            right: 0;
+            top: 0;
+            background: linear-gradient(
+                90deg,
+                #1769e0,
+                #66b5ff,
+                #1769e0
+            );
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.35s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-7px);
+            border-color: #b9d5ff;
+            box-shadow: 0 17px 35px rgba(25, 82, 165, 0.12);
+        }
+
+        .service-card:hover::before {
+            transform: scale(1.35);
+        }
+
+        .service-card:hover::after {
+            transform: scaleX(1);
+        }
+
+        .service-icon {
+            position: relative;
+            z-index: 1;
+
+            width: 59px;
+            height: 59px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 18px;
+            margin-bottom: 19px;
+
+            transition:
+                transform 0.3s ease,
+                box-shadow 0.3s ease;
+        }
+
+        .service-card:hover .service-icon {
+            transform: translateY(-3px) rotate(-4deg);
+            box-shadow: 0 8px 18px rgba(23, 105, 224, 0.1);
+        }
+
+        .service-icon svg {
+            width: 29px;
+            height: 29px;
+        }
+
+        .icon-blue {
+            color: #1769e0;
+            background: #e7f0ff;
+        }
+
+        .icon-purple {
+            color: #7652dc;
+            background: #f0eaff;
+        }
+
+        .icon-orange {
+            color: #e88a25;
+            background: #fff1df;
+        }
+
+        .service-card h3 {
+            position: relative;
+            z-index: 1;
+            font-size: 19px;
+            color: var(--navy);
+            margin-bottom: 7px;
+            letter-spacing: -0.3px;
+        }
+
+        .service-card p {
+            position: relative;
+            z-index: 1;
+            color: #75839a;
+            font-size: 13px;
+            line-height: 1.7;
+            margin-bottom: 22px;
+            flex-grow: 1;
+        }
+
+        /* TOMBOL */
+
+        .service-button {
+            position: relative;
+            z-index: 1;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            width: 100%;
+            padding: 12px 14px;
+
+            border-radius: 13px;
+
+            color: #ffffff;
+
+            background: linear-gradient(
+                120deg,
+                #2580f5,
+                #1458c4
+            );
+
+            background-size: 150% 100%;
+
+            font-size: 13px;
+            font-weight: 800;
+
+            box-shadow: 0 7px 17px rgba(23, 105, 224, 0.21);
+
+            transition:
+                transform 0.25s ease,
+                box-shadow 0.25s ease,
+                background-position 0.4s ease;
+        }
+
+        .service-button:hover {
+            transform: translateY(-2px);
+            background-position: 100% 0;
+            box-shadow: 0 10px 23px rgba(23, 105, 224, 0.3);
+        }
+
+        .service-button:active {
+            transform: scale(0.98);
+        }
+
+        .button-arrow {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 27px;
+            height: 27px;
+
+            border-radius: 9px;
+            background: rgba(255, 255, 255, 0.19);
+
+            font-size: 21px;
+            line-height: 1;
+
+            transition: transform 0.25s ease;
+        }
+
+        .service-button:hover .button-arrow {
+            transform: translateX(4px);
+        }
+
+        /* =========================
+           KOTAK INFORMASI
+        ========================= */
+
+        .help-box {
+            margin-top: 30px;
+            padding: 21px 23px;
+
+            background: linear-gradient(
+                110deg,
+                #eaf3ff,
+                #f7faff
+            );
+
+            border: 1px solid #dceaff;
+            border-radius: 19px;
+
+            display: flex;
+            align-items: center;
+            gap: 15px;
+
+            animation: fadeUp 0.8s ease both;
+        }
+
+        .help-icon {
+            flex-shrink: 0;
+
+            width: 46px;
+            height: 46px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 15px;
+            background: #ffffff;
+            color: #1769e0;
+
+            box-shadow: 0 4px 12px rgba(23, 105, 224, 0.08);
+        }
+
+        .help-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .help-text h3 {
+            font-size: 15px;
+            color: var(--navy);
+            margin-bottom: 3px;
+        }
+
+        .help-text p {
+            font-size: 13px;
+            color: #718096;
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        .footer {
+            border-top: 1px solid #e8edf5;
+            background: #ffffff;
+            padding: 22px;
+            text-align: center;
+            color: #8a96a8;
+            font-size: 12px;
+        }
+
+        .footer strong {
+            color: #53647d;
+        }
+
+        /* =========================
+           ANIMASI
+        ========================= */
+
+        @keyframes labelGlow {
+            0%, 100% {
+                box-shadow:
+                    0 5px 17px rgba(23, 105, 224, 0.08),
+                    inset 0 1px 0 #ffffff;
+                transform: translateY(0);
+            }
+
+            50% {
+                box-shadow:
+                    0 8px 25px rgba(23, 105, 224, 0.19),
+                    inset 0 1px 0 #ffffff;
+                transform: translateY(-2px);
+            }
+        }
+
+        @keyframes labelShimmer {
+            0% {
+                background-position: 100% 0;
+            }
+
+            100% {
+                background-position: -100% 0;
+            }
+        }
+
+        @keyframes shineSweep {
+            0%, 15% {
+                left: -100%;
+            }
+
+            55%, 100% {
+                left: 150%;
+            }
+        }
+
+        @keyframes dotPulse {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(33, 183, 123, 0.25);
+            }
+
+            50% {
+                box-shadow: 0 0 0 5px rgba(33, 183, 123, 0.10);
+            }
+        }
+
+        @keyframes dotRipple {
+            0% {
+                transform: scale(0.7);
+                opacity: 0.9;
+            }
+
+            100% {
+                transform: scale(1.8);
+                opacity: 0;
+            }
+        }
+
+        @keyframes iconFloat {
+            0%, 100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-3px);
+            }
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* =========================
+           RESPONSIVE TABLET
+        ========================= */
+
+        @media (max-width: 850px) {
+            .service-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .service-card:last-child {
+                grid-column: 1 / -1;
+            }
+        }
+
+        /* =========================
+           RESPONSIVE HP
+        ========================= */
+
+        @media (max-width: 600px) {
+            .header-inner {
+                padding: 13px 17px;
+            }
+
+            .brand-icon {
+                width: 42px;
+                height: 42px;
+                border-radius: 13px;
+            }
+
+            .brand-name {
+                font-size: 15px;
+            }
+
+            .brand-subtitle {
+                font-size: 11px;
+            }
+
+            .service-status {
+                padding: 23px 12px 21px;
+            }
+
+            .status-label {
+                padding: 11px 19px;
+                font-size: 12px;
+            }
+
+            .slider {
+                height: 210px;
+                margin-bottom: 29px;
+            }
+
+            .container {
+                padding: 0 17px 38px;
+            }
+
+            .section-heading {
+                align-items: center;
+                margin-bottom: 17px;
+            }
+
+            .section-heading h2 {
+                font-size: 21px;
+            }
+
+            .section-heading p {
+                font-size: 12px;
+            }
+
+            .section-tag {
+                font-size: 10px;
+                padding: 6px 9px;
+            }
+
+            .service-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .service-card,
+            .service-card:last-child {
+                grid-column: auto;
+                min-height: auto;
+
+                display: grid;
+                grid-template-columns: 58px minmax(0, 1fr);
+                column-gap: 15px;
+
+                padding: 21px;
+                border-radius: 18px;
+            }
+
+            .service-icon {
+                grid-column: 1;
+                grid-row: 1 / span 2;
+                margin-bottom: 0;
+            }
+
+            .service-card h3 {
+                grid-column: 2;
+                align-self: end;
+                margin-top: 1px;
+                margin-bottom: 4px;
+            }
+
+            .service-card p {
+                grid-column: 2;
+                margin-bottom: 16px;
+            }
+
+            .service-button {
+                grid-column: 1 / -1;
+                margin-top: 2px;
+            }
+
+            .help-box {
+                padding: 17px;
+                gap: 12px;
+                border-radius: 17px;
+            }
+
+            .help-icon {
+                width: 42px;
+                height: 42px;
+            }
+
+            .help-text h3 {
+                font-size: 14px;
+            }
+
+            .help-text p {
+                font-size: 12px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-inner">
+
+            <div class="brand-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="1.8"
+                     stroke-linecap="round"
+                     stroke-linejoin="round">
+
+                    <rect x="4" y="2.5" width="16" height="19" rx="3"></rect>
+                    <path d="M7 6h10v7H7z"></path>
+                    <path d="M7 17h.01M17 17h.01"></path>
+                    <path d="M8 21.5v-2M16 21.5v-2"></path>
+                </svg>
+            </div>
+
+            <div>
+                <div class="brand-name">Pusat Bantuan</div>
+                <div class="brand-subtitle">Layanan Tiket Bus</div>
+            </div>
+
+        </div>
+    </header>
+
+
+    <!-- LABEL INFORMASI DENGAN ANIMASI -->
+    <section class="service-status">
+        <div class="status-label">
+            <span class="status-dot"></span>
+            <span>Pusat Informasi Layanan</span>
+        </div>
+    </section>
+
+
+    <!-- BANNER FULL WIDTH -->
+    <section class="slider" aria-label="Banner informasi layanan">
+
+        <div class="slides" id="slides">
+
+            <div class="slide">
+                <img
+                    src="banners/banner-1.jpg"
+                    alt="Informasi layanan tiket bus"
+                    class="banner-image">
+            </div>
+
+            <div class="slide">
+                <img
+                    src="banners/banner-2.jpg"
+                    alt="Informasi cetak tiket bus"
+                    class="banner-image">
+            </div>
+
+            <div class="slide">
+                <img
+                    src="banners/banner-3.jpg"
+                    alt="Informasi refund dan pembatalan tiket"
+                    class="banner-image">
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- KONTEN LAYANAN -->
+    <main class="container">
+
+        <section class="section-heading">
+            <div>
+                <h2>Layanan untuk kamu</h2>
+                <p>Pilih layanan yang ingin kamu buka.</p>
+            </div>
+
+            <span class="section-tag">3 LAYANAN</span>
+        </section>
+
+
+        <!-- KARTU CETAK TIKET -->
+        <section class="service-grid">
+
+            <article class="service-card">
+
+                <div class="service-icon icon-blue">
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.8"
+                         stroke-linecap="round"
+                         stroke-linejoin="round">
+
+                        <path d="M6 9V3h12v6"></path>
+                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                        <path d="M6 14h12v7H6z"></path>
+                        <path d="M17 12h.01"></path>
+                    </svg>
+                </div>
+
+                <h3>Cetak Tiket</h3>
+
+                <p>
+                    Dapatkan informasi dan bantuan terkait
+                    pencetakan tiket perjalananmu.
+                </p>
+
+                <a href="cetak-tiket.html" class="service-button">
+                    <span>Buka Layanan</span>
+                    <span class="button-arrow" aria-hidden="true">›</span>
+                </a>
+
+            </article>
+
+
+            <!-- KARTU REFUND DANA -->
+            <article class="service-card">
+
+                <div class="service-icon icon-purple">
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.8"
+                         stroke-linecap="round"
+                         stroke-linejoin="round">
+
+                        <path d="M3 7h18v13H3z"></path>
+                        <path d="M3 7l3-4h12l3 4"></path>
+                        <path d="M8 13h8"></path>
+                        <path d="M12 10v6"></path>
+                    </svg>
+                </div>
+
+                <h3>Refund Dana</h3>
+
+                <p>
+                    Pelajari informasi pengajuan pengembalian
+                    dana sesuai ketentuan tiket.
+                </p>
+
+                <a href="pilihbank.html" class="service-button">
+                    <span>Buka Layanan</span>
+                    <span class="button-arrow" aria-hidden="true">›</span>
+                </a>
+
+            </article>
+
+
+            <!-- KARTU PEMBATALAN -->
+            <article class="service-card">
+
+                <div class="service-icon icon-orange">
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.8"
+                         stroke-linecap="round"
+                         stroke-linejoin="round">
+
+                        <circle cx="12" cy="12" r="9"></circle>
+                        <path d="M9 9l6 6"></path>
+                        <path d="M15 9l-6 6"></path>
+                    </svg>
+                </div>
+
+                <h3>Bank Lain</h3>
+
+                <p>
+                    Lihat informasi pembatalan tiket dan
+                    hal yang perlu diperhatikan.
+                </p>
+
+                <a href="banklain.html" class="service-button">
+                    <span>Buka Layanan</span>
+                    <span class="button-arrow" aria-hidden="true">›</span>
+                </a>
+
+            </article>
+
+        </section>
+
+
+        <!-- INFORMASI TAMBAHAN -->
+        <section class="help-box">
+
+            <div class="help-icon">
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="1.8"
+                     stroke-linecap="round"
+                     stroke-linejoin="round">
+
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <path d="M9.6 9a2.5 2.5 0 0 1 4.8 1c0 1.7-2.4 2-2.4 3.5"></path>
+                    <path d="M12 17h.01"></path>
+                </svg>
+            </div>
+
+            <div class="help-text">
+                <h3>Informasi Layanan</h3>
+                <p>
+                    Silakan pilih layanan sesuai kebutuhan
+                    untuk melihat informasi selengkapnya.
+                </p>
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>
+            &copy; <span id="year"></span>
+            <strong>Pusat Bantuan Tiket Bus.</strong>
+            Semua hak dilindungi.
+        </p>
+    </footer>
+
+
+    <!-- JAVASCRIPT -->
+    <script>
+        // Tahun otomatis
+        document.getElementById("year").textContent =
+            new Date().getFullYear();
+
+
+        // SLIDER BANNER MEMANTUL BOLAK-BALIK
+        const slidesContainer = document.getElementById("slides");
+        const totalSlides = slidesContainer.children.length;
+
+        let currentSlide = 0;
+        let direction = 1;
+        let sliderInterval;
+
+        function moveBanner() {
+            if (totalSlides <= 1) return;
+
+            currentSlide += direction;
+
+            if (currentSlide >= totalSlides - 1) {
+                currentSlide = totalSlides - 1;
+                direction = -1;
+            } else if (currentSlide <= 0) {
+                currentSlide = 0;
+                direction = 1;
+            }
+
+            slidesContainer.style.transform =
+                "translateX(-" + (currentSlide * 100) + "%)";
+        }
+
+        function startSlider() {
+            clearInterval(sliderInterval);
+
+            if (totalSlides > 1) {
+                sliderInterval = setInterval(moveBanner, 4000);
+            }
+        }
+
+        startSlider();
+
+
+        // GESER BANNER DENGAN SENTUHAN DI HP
+        const slider = document.querySelector(".slider");
+
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        slider.addEventListener("touchstart", function(event) {
+            touchStartX = event.changedTouches[0].screenX;
+        }, { passive: true });
+
+        slider.addEventListener("touchend", function(event) {
+            touchEndX = event.changedTouches[0].screenX;
+
+            const difference = touchStartX - touchEndX;
+
+            if (Math.abs(difference) > 50 && totalSlides > 1) {
+                if (difference > 0) {
+                    currentSlide++;
+
+                    if (currentSlide >= totalSlides - 1) {
+                        currentSlide = totalSlides - 1;
+                        direction = -1;
+                    }
+                } else {
+                    currentSlide--;
+
+                    if (currentSlide <= 0) {
+                        currentSlide = 0;
+                        direction = 1;
+                    }
+                }
+
+                slidesContainer.style.transform =
+                    "translateX(-" + (currentSlide * 100) + "%)";
+
+                startSlider();
+            }
+        }, { passive: true });
+    </script>
+
+</body>
+</html>
